@@ -1,0 +1,14 @@
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\bin\Debug\PWST_to_SAP.exe.config
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\bin\Debug\PWST_to_SAP.exe
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\bin\Debug\PWST_to_SAP.pdb
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\bin\Debug\PWST_to_SAP.xml
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.vbprojResolveAssemblyReference.cache
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.Form1.resources
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.Resources.resources
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.vbproj.GenerateResource.Cache
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.exe
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.xml
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.pdb
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\Interop.SAPbobsCOM.dll
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\Interop.SAPbouiCOM.dll
+c:\users\cristhiam\documents\visual studio 2015\Projects\PWST_to_SAP\PWST_to_SAP\obj\Debug\PWST_to_SAP.vbproj.ResolveComReference.cache
