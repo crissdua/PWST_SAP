@@ -1,0 +1,17 @@
+<body>
+	<SQL>
+		<ip>127.0.0.1</ip>
+		<db>istmaniaPWST</db>
+		<user>sa</user>
+		<password>12345</password>
+	</SQL>
+	<HANA>
+		<DbUserName>sa</DbUserName>
+		<DbPassword>12345</DbPassword>
+		<Server>DESKTOP-G67F328</Server>
+		<CompanyDB>FYA</CompanyDB>
+		<UserName>manager</UserName>
+		<Password>alegria</Password>
+		<LicenseServer>DESKTOP-G67F328:30000</LicenseServer>
+	</HANA>
+</body>

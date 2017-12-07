@@ -1,0 +1,90 @@
+alter procedure PWST_SAP
+(
+	in OP varchar(20),
+	in var1 varchar(20),
+	in var2 varchar(20)
+)
+LANGUAGE SQLSCRIPT
+AS
+Begin
+
+if (:OP = 'canal') then
+	select distinct substring("GroupName", 1,3) "GroupName", substring("GroupName", 1,3) from OCRG;
+	--select "GroupCode","GroupName" from OCRG;
+End if; 
+
+if (:OP = 'vendedor') then
+	select "SlpCode","SlpName" from OSLP;
+End if; 
+
+if (:OP = 'banco') then
+	select "BankCode","BankName" from ODSC;
+End if; 
+
+if (:OP = 'cuentasxbanco') then
+	select "BankCode",substring("AcctName",1,30),"AbsEntry",substring("Account",1,15) from DSC1;
+End if;
+
+if (:OP = 'cliente') then
+	select 
+	O."CardCode",O."CardName",O."AddID",
+	ifnull( (select T1."Address2" from crd1 T1 where t1."CardCode" = o."CardCode"),' ') as "Fiscal", 
+	ifnull( (select T1."Address2" from crd1 T1 where t1."CardCode" = o."CardCode"),' ') as "Entrega",
+	O."Phone1",	O."Phone2",' ',
+	ifnull( (select T1."FirstName" from ocpr T1 where t1."CardCode" = o."CardCode"),' ') as "Nombre",
+	' ' as "CatFiscal",O."GroupCode",O."Country",
+	ifnull((select C."Name" from ocst C where o."State1" = c."Code"),' ') as "Pais",
+	O."County",O."SlpCode" as "Territorio",' ' as "Empresa",'0' as "estatus",' ',' ',' ' as "exencion",O."CreditLine" as "limitecredito",'0' as "status" 
+	from OCRD O inner join CRD1 C on O."CardCode" = C."CardCode" where o."UpdateDate" > ADD_DAYS(CURRENT_DATE,-10)  
+	group by o."CardCode", o."AddID",o."CardName",o."GroupCode", o."Phone1",o."Phone2",O."CardName",o."Country",o."CreditLine",o."County",o."SlpCode",o."State1";
+End if;
+
+if (:OP = 'bodegaxvendedor') then
+	select substring("SlpName",1,15),' ' from oslp;
+End if;
+
+if (:OP = 'tipoproducto') then
+	select "ItmsGrpCod","ItmsGrpNam" from OITB;
+End if;
+
+if (:OP = 'encpromocion') then
+	select "AbsEntry",'xxx',"AbsEntry",TO_VARCHAR("ValidForm"),TO_VARCHAR("ValidTo"),"ObjCode",(select O."CardName" from ocrd O where O."CardCode" = "ObjCode")	from oedg;
+End if;
+
+if (:OP = 'familia') then
+	select "PrcCode","PrcName" from oprc where "DimCode" = 1;
+End if;
+
+if (:OP = 'marca') then
+	select "PrcCode","PrcName" from oprc where "DimCode" = 2;
+End if;
+
+if (:OP = 'listaxcliente') then
+	select "CardCode","ListNum" from ocrd;
+End if;
+
+if (:OP = 'encfactura') then
+	--select '','',"DocNum",to_varchar("DocDate"),"DocTotal","CardCode","SlpCode",'0',"DocEntry" from OINV where "DocDate" ='2017-11-14';
+	select '','',"DocNum",to_varchar("DocDate"),"DocTotal","CardCode","SlpCode",'0',"DocEntry" from OINV where "DocDate" = ADD_DAYS(CURRENT_DATE,-1);
+End if;
+
+if (:OP = 'detfactura') then
+	 select T1."DocNum", to_date(T1."DocDate"), substring(T1."CardCode",1,10), substring(T2."ItemCode",1,50),T2."Quantity",'',T2."LineTotal",(T2."PriceBefDi"*T2."Quantity"),
+	T2."Price",T2."WhsCode",0 from OINV T1 INNER JOIN INV1 T2 ON T1."DocEntry"=T2."DocEntry" 
+	where T2."DocEntry" = :var1;
+	
+End if;
+
+if (:OP = 'listaprecio') then
+	SELECT "ListNum","ListName" FROM OPLN;
+End if;
+
+if (:OP = 'invbodega') then
+	SELECT substring(T0."WhsCode",1,50), substring(T1."ItemName",1,25),to_integer(T0."OnHand") FROM OITW T0 INNER JOIN OITM T1 ON T0."ItemCode" = T1."ItemCode" where T1."frozenFor" = 'N' ORDER BY T0."ItemCode", T0."WhsCode";
+End if;
+
+End
+
+--SBO_INDENICSA2016
+
+--call PWST_SAP('invbodega','','')
