@@ -7,6 +7,17 @@ Imports System.Threading
 Imports System.Globalization
 
 Public Class Form1
+
+    Private Const CP_NOCLOSE_BUTTON As Integer = &H200
+
+    Protected Overloads Overrides ReadOnly Property CreateParams() As CreateParams
+        Get
+            Dim myCp As CreateParams = MyBase.CreateParams
+            myCp.ClassStyle = myCp.ClassStyle Or CP_NOCLOSE_BUTTON
+            Return myCp
+        End Get
+    End Property
+
     Public Shared SQL_Conexion As SqlConnection = New SqlConnection()
     Dim connectionString As String '= "Data Source=127.0.0.1;" + "Initial Catalog=istmaniaPWST;" + "User id=sa;" + "Password=12345;"
     Dim tabla As String
@@ -107,23 +118,29 @@ Public Class Form1
 
         'suppose your *finance tab* instance is TabPageFinance 
         If TabControl1.SelectedTab Is PWST Then
-            Size = New Size(441, 349)
+            Size = New Size(378, 404)
+            TabControl1.Size = New Size(340, 291)
+            Button3.Location = New Point(141, 312)
         End If
         If TabControl1.SelectedTab Is SAP Then
-            Size = New Size(641, 349)
-            CargaGridRecibo()
+            Size = New Size(446, 404)
+            TabControl1.Size = New Size(409, 291)
+            Button3.Location = New Point(172, 312)
+            'CargaGridRecibo()
         End If
         If TabControl1.SelectedTab Is CLEAN Then
-            Size = New Size(441, 349)
+            Size = New Size(378, 404)
+            TabControl1.Size = New Size(340, 291)
+            Button3.Location = New Point(141, 312)
         End If
     End Sub
 
 #Region "Pedidos Recibidos"
-    Public Function Pedidos()
+    Public Function Pedidos(valoresrecibos As String, valoresseries As String)
         Dim docistm As String
         Dim con As SqlConnection = New SqlConnection(connectionString)
         con.Open()
-        Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT T0.ID_PWST AS ID_PWST,T0.EMPRESA AS EMPRESA,T0.SERIE AS SERIE,T0.NUMEROPEDIDO AS NUMPEDIDO,T0.FECHAPEDIDO AS 'DocDate',T0.FECHAENTREGA AS 'DocDueDate',T0.MONTO AS 'DocTotal',T0.OBSERVACIONES AS 'Comments',T0.TIPODOC AS TIPODOC,T0.CLIENTE AS 'CardCode',T0.VENDEDOR AS 'SlpCode',T0.STATUS AS DOCSTATUS,T0.BODEGA AS BODEGA FROM INT_CABECERAPEDIDOSPWST T0 where T0.FECHAPEDIDO = '" + DateTime.Today.AddDays(-1).ToShortDateString + "'", con)
+        Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT T0.ID_PWST AS ID_PWST,T0.EMPRESA AS EMPRESA,T0.SERIE AS SERIE,T0.NUMEROPEDIDO AS NUMPEDIDO,T0.FECHAPEDIDO AS 'DocDate',T0.FECHAENTREGA AS 'DocDueDate',T0.MONTO AS 'DocTotal',T0.OBSERVACIONES AS 'Comments',T0.TIPODOC AS TIPODOC,T0.CLIENTE AS 'CardCode',T0.VENDEDOR AS 'SlpCode',T0.STATUS AS DOCSTATUS,T0.BODEGA AS BODEGA FROM INT_CABECERAPEDIDOSPWST T0 where T0.FECHAPEDIDO = '" + DateTime.Today.AddDays(-1).ToShortDateString + "' and NUMEROPEDIDO in (" + valoresrecibos + ") and SERIE in (" + valoresseries + ") and STATUS = '1'", con)
         Dim DT_dat As DataTable = New DataTable()
         SQL_da.Fill(DT_dat)
         con.Close()
@@ -136,18 +153,18 @@ Public Class Form1
             Dim Order As SAPbobsCOM.Documents = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oPurchaseOrders)
 
             docistm = row("NUMPEDIDO").ToString()
-            Order.Series = 12
+            Order.Series = 15
             Order.DocDate = row("DocDate").ToString()
             Order.CardCode = row("CardCode").ToString()
             Order.DocDueDate = row("DocDueDate").ToString()
-            Order.DocTotal = Convert.ToDouble(row("DocTotal").ToString())
-            Order.UserFields.Fields.Item("U_PWST").Value = row("ID_PWST").ToString()
-            Order.UserFields.Fields.Item("U_EMPRESA").Value = row("EMPRESA").ToString()
-            Order.UserFields.Fields.Item("U_SERIE").Value = row("SERIE").ToString()
-            Order.UserFields.Fields.Item("U_NUMPEDIDO").Value = row("NUMPEDIDO").ToString()
-            Order.UserFields.Fields.Item("U_BODEGA").Value = row("BODEGA").ToString()
-            Order.UserFields.Fields.Item("U_TIPODOC").Value = row("TIPODOC").ToString()
-            Order.UserFields.Fields.Item("U_DOCSTATUS").Value = row("DOCSTATUS").ToString()
+            'Order.DocTotal = Convert.ToDouble(row("DocTotal").ToString())
+            'Order.UserFields.Fields.Item("U_PWST").Value = row("ID_PWST").ToString()
+            'Order.UserFields.Fields.Item("U_EMPRESA").Value = row("EMPRESA").ToString()
+            'Order.UserFields.Fields.Item("U_SERIE").Value = row("SERIE").ToString()
+            'Order.UserFields.Fields.Item("U_NUMPEDIDO").Value = row("NUMPEDIDO").ToString()
+            'Order.UserFields.Fields.Item("U_BODEGA").Value = row("BODEGA").ToString()
+            'Order.UserFields.Fields.Item("U_TIPODOC").Value = row("TIPODOC").ToString()
+            'Order.UserFields.Fields.Item("U_DOCSTATUS").Value = row("DOCSTATUS").ToString()
             Order.DocType = SAPbobsCOM.BoDocumentTypes.dDocument_Items
 
             con.Open()
@@ -171,22 +188,54 @@ Public Class Form1
             Else
                 Dim cons As SqlConnection = New SqlConnection(connectionString)
                 cons.Open()
-                Dim SQL_daUp As SqlCommand = New SqlCommand("UPDATE INT_CABECERAPEDIDOSPWST SET SAP = 1 WHERE NUMEROPEDIDO = '" + row("NUMPEDIDO").ToString() + "'", cons)
+                Dim SQL_daUp As SqlCommand = New SqlCommand("UPDATE INT_CABECERAPEDIDOSPWST SET STATUS = 2 WHERE NUMEROPEDIDO = '" + row("NUMPEDIDO").ToString() + "'", cons)
                 SQL_daUp.ExecuteNonQuery()
                 cons.Close()
 
             End If
+            CargaGridPedido()
         Next
+    End Function
+
+
+    Public Function CargaGridPedido()
+        Dim con As SqlConnection = New SqlConnection(connectionString)
+        con.Open()
+        Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT T0.ID_PWST AS ID_PWST,T0.EMPRESA AS EMPRESA,T0.SERIE AS SERIE,T0.NUMEROPEDIDO AS NUMPEDIDO,T0.FECHAPEDIDO AS 'DocDate',T0.FECHAENTREGA AS 'DocDueDate',T0.MONTO AS 'DocTotal',T0.OBSERVACIONES AS 'Comments',T0.TIPODOC AS TIPODOC,T0.CLIENTE AS 'CardCode',T0.VENDEDOR AS 'SlpCode',T0.STATUS AS DOCSTATUS,T0.BODEGA AS BODEGA FROM INT_CABECERAPEDIDOSPWST T0 where T0.FECHAPEDIDO = '" + DateTime.Today.AddDays(-1).ToShortDateString + "' AND STATUS = '1'", con)
+        'Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT ID AS 'ID_PWST',EMPRESA,SERIE,NUMERORECIBO as 'NUMRECIBO',FECHA as 'DocDate',CLIENTE as 'CardCode',MONTO as 'CashSum',moneda as 'Moneda',VENDEDOR,TIPODOC,BANCO,CUENTA FROM INT_CABECERACOBRANZAPWST T0 where T0.FECHA = '" + DateTime.Today.AddDays(-1).ToShortDateString + "' and STATUS = '1'", con)
+        Dim DT_dat As DataTable = New DataTable()
+        SQL_da.Fill(DT_dat)
+        Dim i As DataGridViewCheckBoxColumn = New DataGridViewCheckBoxColumn()
+        Dim existe As Boolean = DGV.Columns.Cast(Of DataGridViewColumn).Any(Function(x) x.Name = "CHK")
+        If existe = False Then
+            DGV.Columns.Add(i)
+            i.HeaderText = "CHK"
+            i.Name = "CHK"
+            i.Width = 32
+            i.DisplayIndex = 0
+        End If
+        DGV.DataSource = DT_dat
+        con.Close()
     End Function
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         If oCompany.Connected = True Then
-            Pedidos()
+            CargaGridPedido()
+            Label1.Text = "Pedidos a Realizar:"
+            Button4.Enabled = True
+            Button4.Visible = True
+            ListBox1.Visible = True
+            'Pedidos()
         Else
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oCompany)
             oCompany = Nothing
             GC.Collect()
             If MakeConnectionSAP() Then
-                Pedidos()
+                CargaGridPedido()
+                Label1.Text = "Pedidos a Realizar:"
+                Button4.Enabled = True
+                Button4.Visible = True
+                ListBox1.Visible = True
+                'Pedidos()
             Else
                 MessageBox.Show("Error de Conexion")
             End If
@@ -220,21 +269,21 @@ Public Class Form1
 
             Dim oPayment As SAPbobsCOM.Payments = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments)
 
-            oPayment.Series = 14
+            oPayment.Series = 17
             oPayment.DocDate = row("DocDate").ToString()
             oPayment.CardCode = row("CardCode").ToString()
             oPayment.DocType = oPayment.DocType.rCustomer
             oPayment.CashSum = Convert.ToDouble(row("CashSum").ToString())
-            oPayment.CashAccount = "_SYS00000000004"
-            oPayment.UserFields.Fields.Item("U_PWST").Value = row("ID_PWST").ToString()
-            oPayment.UserFields.Fields.Item("U_EMPRESA").Value = row("EMPRESA").ToString()
-            oPayment.UserFields.Fields.Item("U_SERIE").Value = row("SERIE").ToString()
-            oPayment.UserFields.Fields.Item("U_NUMRECIBO").Value = row("NUMRECIBO").ToString()
-            oPayment.UserFields.Fields.Item("U_MONEDA").Value = row("Moneda").ToString()
-            oPayment.UserFields.Fields.Item("U_TIPODOC").Value = row("TIPODOC").ToString()
-            oPayment.UserFields.Fields.Item("U_VENDEDOR").Value = row("VENDEDOR").ToString()
-            oPayment.UserFields.Fields.Item("U_BANCO").Value = row("BANCO").ToString()
-            oPayment.UserFields.Fields.Item("U_CUENTA").Value = row("CUENTA").ToString()
+            oPayment.CashAccount = "_SYS00000000138"
+            'oPayment.UserFields.Fields.Item("U_PWST").Value = row("ID_PWST").ToString()
+            'oPayment.UserFields.Fields.Item("U_EMPRESA").Value = row("EMPRESA").ToString()
+            'oPayment.UserFields.Fields.Item("U_SERIE").Value = row("SERIE").ToString()
+            'oPayment.UserFields.Fields.Item("U_NUMRECIBO").Value = row("NUMRECIBO").ToString()
+            'oPayment.UserFields.Fields.Item("U_MONEDA").Value = row("Moneda").ToString()
+            'oPayment.UserFields.Fields.Item("U_TIPODOC").Value = row("TIPODOC").ToString()
+            'oPayment.UserFields.Fields.Item("U_VENDEDOR").Value = row("VENDEDOR").ToString()
+            'oPayment.UserFields.Fields.Item("U_BANCO").Value = row("BANCO").ToString()
+            'oPayment.UserFields.Fields.Item("U_CUENTA").Value = row("CUENTA").ToString()
 
             'sql = ("select top 1 " & Chr(34) & "DocEntry" & Chr(34) & " from oinv where " & Chr(34) & "DocNum" & Chr(34) & " = " + row("CUENTA").ToString())
             'Dim oRecordSet As SAPbobsCOM.Recordset
@@ -267,12 +316,20 @@ Public Class Form1
     Private Sub Button_Cobros_Click(sender As Object, e As EventArgs) Handles Button_Cobros.Click
         If oCompany.Connected = True Then
             CargaGridRecibo()
+            Label1.Text = "Recibos a Pagar:"
+            Button2.Enabled = True
+            Button2.Visible = True
+            ListBox1.Visible = True
         Else
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oCompany)
             oCompany = Nothing
             GC.Collect()
             If MakeConnectionSAP() Then
+                Label1.Text = "Recibos a Pagar:"
                 CargaGridRecibo()
+                Button2.Enabled = True
+                Button2.Visible = True
+                ListBox1.Visible = True
             Else
                 MessageBox.Show("Error de Conexion")
             End If
@@ -283,6 +340,9 @@ Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         MakeConnectionSAP()
+        Size = New Size(378, 404)
+        TabControl1.Size = New Size(340, 291)
+        Button3.Location = New Point(141, 312)
         'TextBox1.Text = DateTime.Today.AddDays(-1).ToShortDateString '51395613
     End Sub
 
@@ -886,7 +946,7 @@ Public Class Form1
             End If
         End If
     End Sub
-    'INT_PRODUCTOS        ////////CAMPOS FALTANTES
+    'INT_PRODUCTOS////////CAMPOS FALTANTES
     Public Function productos()
         Dim sql As String
         Try
@@ -1326,8 +1386,9 @@ Public Class Form1
 
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Dim query1 As String
-        query1 = ""
+        Try
+            Dim query1 As String
+            query1 = ""
         Dim query2 As String
         query2 = ""
         Dim i As DataGridViewCheckBoxColumn = New DataGridViewCheckBoxColumn()
@@ -1351,19 +1412,24 @@ Public Class Form1
         valrecibo = Mid(query1, 1, Len(query1) - 1)
         valseries = Mid(query2, 1, Len(query2) - 1)
         Dim result As Integer = MessageBox.Show("Desea Realizar los pagos?", "Atencion", MessageBoxButtons.YesNoCancel)
-        If result = DialogResult.Cancel Then
-            MessageBox.Show("Cancelado")
-        ElseIf result = DialogResult.No Then
-            MessageBox.Show("No se pagaran")
-        ElseIf result = DialogResult.Yes Then
-            Recibos(valrecibo, valseries)
-        End If
+            If result = DialogResult.Cancel Then
+                MessageBox.Show("Cancelado")
+            ElseIf result = DialogResult.No Then
+                MessageBox.Show("No se pagaran")
+            ElseIf result = DialogResult.Yes Then
+                Recibos(valrecibo, valseries)
+            End If
+
+        Catch ex As Exception
+            MsgBox("No selecciono ningun cobro a realizar, o ocurrio un error inesperado!")
+        End Try
     End Sub
 
     Public Function CargaGridRecibo()
         Dim con As SqlConnection = New SqlConnection(connectionString)
         con.Open()
-        Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT ID AS 'ID_PWST',EMPRESA,SERIE,NUMERORECIBO as 'NUMRECIBO',FECHA as 'DocDate',CLIENTE as 'CardCode',MONTO as 'CashSum',moneda as 'Moneda',VENDEDOR,TIPODOC,BANCO,CUENTA FROM INT_CABECERACOBRANZAPWST T0 where T0.FECHA = '" + DateTime.Today.AddDays(-1).ToShortDateString + "' and STATUS = '1'", con)
+        Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT ID AS 'ID_PWST',EMPRESA,SERIE,NUMERORECIBO as 'NUMRECIBO',FECHA as 'DocDate',CLIENTE as 'CardCode',MONTO as 'CashSum',moneda as 'Moneda',VENDEDOR,TIPODOC,BANCO,CUENTA FROM INT_CABECERACOBRANZAPWST T0 where STATUS = '1'", con)
+        'Dim SQL_da As SqlDataAdapter = New SqlDataAdapter("SELECT ID AS 'ID_PWST',EMPRESA,SERIE,NUMERORECIBO as 'NUMRECIBO',FECHA as 'DocDate',CLIENTE as 'CardCode',MONTO as 'CashSum',moneda as 'Moneda',VENDEDOR,TIPODOC,BANCO,CUENTA FROM INT_CABECERACOBRANZAPWST T0 where T0.FECHA = '" + DateTime.Today.AddDays(-1).ToShortDateString + "' and STATUS = '1'", con)
         Dim DT_dat As DataTable = New DataTable()
         SQL_da.Fill(DT_dat)
         Dim i As DataGridViewCheckBoxColumn = New DataGridViewCheckBoxColumn()
@@ -1412,6 +1478,46 @@ Public Class Form1
         Else
             Exit Sub
         End If
+    End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        Try
+            Dim query1 As String
+            query1 = ""
+            Dim query2 As String
+            query2 = ""
+            Dim i As DataGridViewCheckBoxColumn = New DataGridViewCheckBoxColumn()
+            Dim existe As Boolean = DGV.Columns.Cast(Of DataGridViewColumn).Any(Function(x) x.Name = "CHK")
+            If existe = False Then
+                DGV.Columns.Add(i)
+                i.HeaderText = "CHK"
+                i.Name = "CHK"
+                i.Width = 32
+                i.DisplayIndex = 0
+            End If
+            ListBox1.Items.Clear()
+            For Each row As DataGridViewRow In DGV.Rows
+                Dim chk As DataGridViewCheckBoxCell = row.Cells("CHK")
+                If chk.Value IsNot Nothing AndAlso chk.Value = True Then
+                    query1 += "'" + DGV.Rows(chk.RowIndex).Cells.Item(4).Value.ToString + "'" + ","
+                    query2 += "'" + DGV.Rows(chk.RowIndex).Cells.Item(3).Value.ToString + "'" + ","
+                    ListBox1.Items.Add(DGV.Rows(chk.RowIndex).Cells.Item(3).Value.ToString + "-" + DGV.Rows(chk.RowIndex).Cells.Item(4).Value.ToString)
+                End If
+            Next
+            valrecibo = Mid(query1, 1, Len(query1) - 1)
+            valseries = Mid(query2, 1, Len(query2) - 1)
+            Dim result As Integer = MessageBox.Show("Desea Realizar los pagos?", "Atencion", MessageBoxButtons.YesNoCancel)
+            If result = DialogResult.Cancel Then
+                MessageBox.Show("Cancelado")
+            ElseIf result = DialogResult.No Then
+                MessageBox.Show("No se pagaran")
+            ElseIf result = DialogResult.Yes Then
+                Pedidos(valrecibo, valseries)
+            End If
+
+        Catch ex As Exception
+            MsgBox("No selecciono ningun cobro a realizar, o ocurrio un error inesperado!")
+        End Try
     End Sub
 End Class
 

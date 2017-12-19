@@ -75,6 +75,7 @@ Partial Class Form1
         Me.Button27 = New System.Windows.Forms.Button()
         Me.Button28 = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
+        Me.Button4 = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.PWST.SuspendLayout()
         Me.SAP.SuspendLayout()
@@ -84,7 +85,7 @@ Partial Class Form1
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(6, 6)
+        Me.Button1.Location = New System.Drawing.Point(26, 7)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 0
@@ -93,7 +94,7 @@ Partial Class Form1
         '
         'Button_Cobros
         '
-        Me.Button_Cobros.Location = New System.Drawing.Point(320, 6)
+        Me.Button_Cobros.Location = New System.Drawing.Point(299, 7)
         Me.Button_Cobros.Name = "Button_Cobros"
         Me.Button_Cobros.Size = New System.Drawing.Size(75, 23)
         Me.Button_Cobros.TabIndex = 1
@@ -108,7 +109,7 @@ Partial Class Form1
         Me.TabControl1.Location = New System.Drawing.Point(12, 15)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(341, 291)
+        Me.TabControl1.Size = New System.Drawing.Size(409, 291)
         Me.TabControl1.TabIndex = 6
         '
         'PWST
@@ -137,7 +138,7 @@ Partial Class Form1
         Me.PWST.Location = New System.Drawing.Point(4, 22)
         Me.PWST.Name = "PWST"
         Me.PWST.Padding = New System.Windows.Forms.Padding(3)
-        Me.PWST.Size = New System.Drawing.Size(333, 265)
+        Me.PWST.Size = New System.Drawing.Size(332, 265)
         Me.PWST.TabIndex = 1
         Me.PWST.Text = "PWST"
         Me.PWST.UseVisualStyleBackColor = True
@@ -335,6 +336,7 @@ Partial Class Form1
         '
         'SAP
         '
+        Me.SAP.Controls.Add(Me.Button4)
         Me.SAP.Controls.Add(Me.Label1)
         Me.SAP.Controls.Add(Me.ListBox1)
         Me.SAP.Controls.Add(Me.Button2)
@@ -354,9 +356,8 @@ Partial Class Form1
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(23, 168)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(86, 13)
+        Me.Label1.Size = New System.Drawing.Size(0, 13)
         Me.Label1.TabIndex = 8
-        Me.Label1.Text = "Recibos a Pagar"
         '
         'ListBox1
         '
@@ -365,15 +366,18 @@ Partial Class Form1
         Me.ListBox1.Name = "ListBox1"
         Me.ListBox1.Size = New System.Drawing.Size(140, 95)
         Me.ListBox1.TabIndex = 7
+        Me.ListBox1.Visible = False
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(137, 6)
+        Me.Button2.Enabled = False
+        Me.Button2.Location = New System.Drawing.Point(143, 6)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(114, 23)
         Me.Button2.TabIndex = 4
         Me.Button2.Text = "Realiza Cobro"
         Me.Button2.UseVisualStyleBackColor = True
+        Me.Button2.Visible = False
         '
         'DGV
         '
@@ -610,20 +614,32 @@ Partial Class Form1
         '
         Me.Button3.BackColor = System.Drawing.Color.DarkRed
         Me.Button3.ForeColor = System.Drawing.SystemColors.ControlLightLight
-        Me.Button3.Location = New System.Drawing.Point(141, 312)
+        Me.Button3.Location = New System.Drawing.Point(172, 312)
         Me.Button3.Name = "Button3"
         Me.Button3.Size = New System.Drawing.Size(75, 23)
         Me.Button3.TabIndex = 7
         Me.Button3.Text = "Salir"
         Me.Button3.UseVisualStyleBackColor = False
         '
+        'Button4
+        '
+        Me.Button4.Enabled = False
+        Me.Button4.Location = New System.Drawing.Point(143, 7)
+        Me.Button4.Name = "Button4"
+        Me.Button4.Size = New System.Drawing.Size(114, 23)
+        Me.Button4.TabIndex = 9
+        Me.Button4.Text = "Realiza Pedido"
+        Me.Button4.UseVisualStyleBackColor = True
+        Me.Button4.Visible = False
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(362, 347)
+        Me.ClientSize = New System.Drawing.Size(430, 365)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.TabControl1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
         Me.Name = "Form1"
         Me.Text = "PWST_SAP"
         Me.TabControl1.ResumeLayout(False)
@@ -689,4 +705,5 @@ Partial Class Form1
     Friend WithEvents ListBox1 As ListBox
     Friend WithEvents Label1 As Label
     Friend WithEvents Button3 As Button
+    Friend WithEvents Button4 As Button
 End Class

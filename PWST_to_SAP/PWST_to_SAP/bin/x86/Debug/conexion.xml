@@ -9,9 +9,9 @@
 		<DbUserName>SYSTEM</DbUserName>
 		<DbPassword>$Sap2017</DbPassword>
 		<Server>192.168.1.51:30015</Server>
-		<CompanyDB>SBO_INDENICSA2016</CompanyDB>
+		<CompanyDB>CTWGUA</CompanyDB>
 		<UserName>manager</UserName>
-		<Password>nicaragua</Password>
+		<Password>$uperC14</Password>
 		<LicenseServer>192.168.1.51:40000</LicenseServer>
 	</HANA>
 </body>
