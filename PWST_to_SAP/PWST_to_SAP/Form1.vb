@@ -935,7 +935,7 @@ Public Class Form1
             While oRecordSet.EoF = False
                 Dim con As SqlConnection = New SqlConnection(connectionString)
                 con.Open()
-                Dim SQL_daUp As SqlCommand = New SqlCommand("INSERT INTO INT_LISTAPRECIO VALUES('" + oRecordSet.Fields.Item(0).Value.ToString + "','" + oRecordSet.Fields.Item(1).Value.ToString + "')", con)
+                Dim SQL_daUp As SqlCommand = New SqlCommand("INSERT INTO INT_SALDOS VALUES('" + oRecordSet.Fields.Item(0).Value.ToString + "','" + oRecordSet.Fields.Item(1).Value.ToString + "','" + oRecordSet.Fields.Item(2).Value.ToString + "','" + oRecordSet.Fields.Item(3).Value.ToString + "','" + oRecordSet.Fields.Item(4).Value.ToString + "','" + oRecordSet.Fields.Item(5).Value.ToString + "','" + oRecordSet.Fields.Item(6).Value.ToString + "')", con)
                 SQL_daUp.ExecuteNonQuery()
                 con.Close()
                 oRecordSet.MoveNext()
@@ -943,6 +943,7 @@ Public Class Form1
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oRecordSet)
             oRecordSet = Nothing
             GC.Collect()
+            MessageBox.Show("Proceso Finalizado")
         Catch ex As Exception
             MessageBox.Show(ex.Message)
         End Try
@@ -1017,6 +1018,7 @@ Public Class Form1
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oRecordSet)
             oRecordSet = Nothing
             GC.Collect()
+            MessageBox.Show("Proceso Finalizado")
         Catch ex As Exception
             MessageBox.Show(ex.Message)
         End Try
@@ -1054,6 +1056,7 @@ Public Class Form1
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oRecordSet)
             oRecordSet = Nothing
             GC.Collect()
+            MessageBox.Show("Proceso Finalizado")
         Catch ex As Exception
             MessageBox.Show(ex.Message)
         End Try
@@ -1091,6 +1094,7 @@ Public Class Form1
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oRecordSet)
             oRecordSet = Nothing
             GC.Collect()
+            MessageBox.Show("Proceso Finalizado")
         Catch ex As Exception
             MessageBox.Show(ex.Message)
         End Try
@@ -1381,7 +1385,7 @@ Public Class Form1
     End Sub
 
     Private Sub Button12_Click(sender As Object, e As EventArgs) Handles Button12.Click
-        tabla = "INT_LISTAPRECIO"
+        tabla = "INT_SALDOS"
         Delete(tabla)
     End Sub
 
